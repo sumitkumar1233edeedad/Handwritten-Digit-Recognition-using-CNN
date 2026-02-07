@@ -4,6 +4,11 @@ A deep learning project that recognizes handwritten digits (0–9) using a Convo
 
 ---
 
+🚀 **Live Demo:**  
+👉 https://handwritten-digit-detector.streamlit.app/
+
+---
+
 ## 📌 Project Overview
 
 Handwritten digit recognition is a computer vision problem where a machine learns to identify digits written by humans.  
