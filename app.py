@@ -7,41 +7,70 @@ from PIL import Image
 # -------------------------
 # CNN Model (MATCH TRAINING)
 # -------------------------
+from torch import nn
+# create a convolutional nerual network
 class HandwrittenModel(nn.Module):
-    def __init__(self):
+    def __init__(self, input_shape: int, hidden_unit: int, output_shape: int):
         super().__init__()
-
-        self.conv_block_1 = nn.Sequential(
-            nn.Conv2d(1, 10, kernel_size=3, padding=1),
+        self.conv_block_1  = nn.Sequential(
+            nn.Conv2d(
+                in_channels=input_shape,
+                out_channels=hidden_unit,
+                kernel_size=3,
+                stride=1,
+                padding=1
+            ), # values we can set ourselves is our nn's are called hyperparmeters
             nn.ReLU(),
-            nn.Conv2d(10, 10, kernel_size=3, padding=1),
+            nn.Conv2d(
+                in_channels=hidden_unit,
+                out_channels=hidden_unit,
+                kernel_size=3,
+                stride=1,
+                padding=1
+            ),
             nn.ReLU(),
-            nn.MaxPool2d(2)
+            nn.MaxPool2d(kernel_size=2)
         )
 
         self.conv_block_2 = nn.Sequential(
-            nn.Conv2d(10, 10, kernel_size=3, padding=1),
+            nn.Conv2d(
+                in_channels=hidden_unit,
+                out_channels=hidden_unit,
+                kernel_size=3,
+                stride=1,
+                padding=1
+            ),
             nn.ReLU(),
-            nn.Conv2d(10, 10, kernel_size=3, padding=1),
+            nn.Conv2d(
+                in_channels=hidden_unit,
+                out_channels=hidden_unit,
+                kernel_size=3,
+                stride=1,
+                padding=1
+            ),
             nn.ReLU(),
-            nn.MaxPool2d(2)
+            nn.MaxPool2d(kernel_size=2)
         )
+        
 
         self.classifier = nn.Sequential(
             nn.Flatten(),
-            nn.Linear(10 * 7 * 7, 10)
+            nn.Linear(in_features=hidden_unit*7*7, # there is trick to calculating this...
+                      out_features=output_shape)
         )
-
     def forward(self, x):
         x = self.conv_block_1(x)
+      
         x = self.conv_block_2(x)
+ 
+       
         x = self.classifier(x)
         return x
 
 # -------------------------
 # Load Model
 # -------------------------
-model = HandwrittenModel()
+model = HandwrittenModel(1, 10, 10)
 model.load_state_dict(torch.load("Handwritten.pth", map_location="cpu"))
 model.eval()
 
@@ -75,3 +104,5 @@ if uploaded_file is not None:
         prediction = torch.argmax(output, dim=1).item()
 
     st.success(f"Predicted Digit: {prediction}")
+    st.balloons()
+    st.balloons()
